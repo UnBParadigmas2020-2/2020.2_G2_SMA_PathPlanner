@@ -3,17 +3,14 @@ class AStar():
         self.agent_dict = env.agent_dict
         self.admissible_heuristic = env.admissible_heuristic
         self.is_at_goal = env.is_at_goal
-        self.get_neighbors = env.get_neighborsz8
+        self.get_neighbors = env.get_neighbors
 
-    def reconstruct_path(self, history_path, current_path):
-        entirety_path = [current_path]
-
-        while current_path in history_path.keys():
-            current_path = history_path[current_path]
-            entirety_path.append(current_path)
-
-        return entirety_path[::-1]
-    
+    def reconstruct_path(self, came_from, current):
+        total_path = [current]
+        while current in came_from.keys():
+            current = came_from[current]
+            total_path.append(current)
+        return total_path[::-1]
 
     def search(self, agent_name):
         initial_state = self.agent_dict[agent_name]["start"]
@@ -59,3 +56,4 @@ class AStar():
                 g_score[neighbor] = tentative_g_score
                 f_score[neighbor] = g_score[neighbor] + self.admissible_heuristic(neighbor, agent_name)
         return False
+
