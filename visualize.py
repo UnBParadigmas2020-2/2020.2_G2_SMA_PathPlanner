@@ -9,7 +9,7 @@ import matplotlib.animation as manimation
 import argparse
 import math
 
-Colors = ['#ff71ce', '#01cdfe', '#05ffa1']
+Colors = ['#fffb96', '#01cdfe', '#05ffa1']
 
 
 class Animation:
@@ -24,3 +24,14 @@ class Animation:
     self.fig = plt.figure(frameon=False, figsize=(4 * aspect, 4))
     self.ax = self.fig.add_subplot(111, aspect='equal')
     self.fig.subplots_adjust(left=0,right=1,bottom=0,top=1, wspace=None, hspace=None)
+    # self.ax.set_frame_on(False)
+
+    self.patches = []
+    self.artists = []
+    self.agents = dict()
+    self.agent_names = dict()
+    # create boundary patch
+    xmin = -0.5
+    ymin = -0.5
+    xmax = map["map"]["dimensions"][0] - 0.5
+    ymax = map["map"]["dimensions"][1] - 0.5
