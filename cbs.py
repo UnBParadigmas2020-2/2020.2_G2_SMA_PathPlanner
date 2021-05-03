@@ -67,3 +67,44 @@ class Constraints(object):
     def __str__(self):
         return "VC: " + str([str(vc) for vc in self.vertex_constraints])  + \
             "EC: " + str([str(ec) for ec in self.edge_constraints])
+
+
+class Environment(object):
+    def __init__(self, dimension, agents, obstacles):
+        self.dimension = dimension
+        self.obstacles = obstacles
+
+        self.agents = agents
+        self.agent_dict = {}
+
+        self.make_agent_dict()
+
+        self.constraints = Constraints()
+        self.constraint_dict = {}
+
+        self.a_star = AStar(self)
+
+    def get_neighbors(self, state):
+        neighbors = []
+
+        # Wait action
+        n = State(state.time + 1, state.location)
+        if self.state_valid(n):
+            neighbors.append(n)
+        # Up action
+        n = State(state.time + 1, Location(state.location.x, state.location.y+1))
+        if self.state_valid(n) and self.transition_valid(state, n):
+            neighbors.append(n)
+        # Down action
+        n = State(state.time + 1, Location(state.location.x, state.location.y-1))
+        if self.state_valid(n) and self.transition_valid(state, n):
+            neighbors.append(n)
+        # Left action
+        n = State(state.time + 1, Location(state.location.x-1, state.location.y))
+        if self.state_valid(n) and self.transition_valid(state, n):
+            neighbors.append(n)
+        # Right action
+        n = State(state.time + 1, Location(state.location.x+1, state.location.y))
+        if self.state_valid(n) and self.transition_valid(state, n):
+            neighbors.append(n)
+        return neighbors
