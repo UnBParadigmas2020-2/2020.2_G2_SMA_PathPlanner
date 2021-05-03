@@ -29,7 +29,6 @@ class Animation:
     self.artists = []
     self.agents = dict()
     self.agent_names = dict()
-
     xmin = -0.5
     ymin = -0.5
     xmax = map["map"]["dimensions"][0] - 0.5
@@ -37,7 +36,6 @@ class Animation:
 
     plt.xlim(xmin, xmax)
     plt.ylim(ymin, ymax)
-
 
     self.patches.append(Rectangle((xmin, ymin), xmax - xmin, ymax - ymin, facecolor='#9452cc', edgecolor='#9452cc'))
     for o in map["map"]["obstacles"]:
@@ -63,7 +61,7 @@ class Animation:
                                frames=int(self.T+1) * 10,
                                interval=100,
                                blit=True)
-                              
+
   def save(self, file_name, speed):
     self.anim.save(
       file_name,
@@ -73,7 +71,7 @@ class Animation:
 
   def show(self):
     plt.show()
-  
+
   def init_func(self):
     for p in self.patches:
       self.ax.add_patch(p)
@@ -88,11 +86,9 @@ class Animation:
       self.agents[agent_name].center = p
       self.agent_names[agent_name].set_position(p)
 
-    # reset all colors
     for _,agent in self.agents.items():
       agent.set_facecolor(agent.original_face_color)
 
-    # check drive-drive collisions
     agents_array = [agent for _,agent in self.agents.items()]
     for i in range(0, len(agents_array)):
       for j in range(i+1, len(agents_array)):
