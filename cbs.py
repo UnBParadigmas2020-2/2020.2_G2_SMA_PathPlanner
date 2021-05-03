@@ -6,8 +6,7 @@ from math import fabs
 from itertools import combinations
 from copy import deepcopy
 
-from cbs.a_star import AStar
-
+from a_star import AStar
 
 class Location(object):
     def __init__(self, x=-1, y=-1):
@@ -18,6 +17,18 @@ class Location(object):
     def __str__(self):
         return str((self.x, self.y))
 
+class State(object):
+    def __init__(self, time, location):
+        self.time = time
+        self.location = location
+    def __eq__(self, other):
+        return self.time == other.time and self.location == other.location
+    def __hash__(self):
+        return hash(str(self.time)+str(self.location.x) + str(self.location.y))
+    def is_equal_except_time(self, state):
+        return self.location == state.location
+    def __str__(self):
+        return str((self.time, self.location.x, self.location.y))
 
 class Conflict(object):
     VERTEX = 1
@@ -35,7 +46,6 @@ class Conflict(object):
     def __str__(self):
         return '(' + str(self.time) + ', ' + self.agent_1 + ', ' + self.agent_2 + \
              ', '+ str(self.location_1) + ', ' + str(self.location_2) + ')'
-
 
 class VertexConstraint(object):
     def __init__(self, time, location):
@@ -75,7 +85,6 @@ class Constraints(object):
         return "VC: " + str([str(vc) for vc in self.vertex_constraints])  + \
             "EC: " + str([str(ec) for ec in self.edge_constraints])
 
-
 class Environment(object):
     def __init__(self, dimension, agents, obstacles):
         self.dimension = dimension
@@ -94,27 +103,23 @@ class Environment(object):
     def get_neighbors(self, state):
         neighbors = []
 
-        # Wait action
         n = State(state.time + 1, state.location)
         if self.state_valid(n):
             neighbors.append(n)
-        # Up action
         n = State(state.time + 1, Location(state.location.x, state.location.y+1))
         if self.state_valid(n) and self.transition_valid(state, n):
             neighbors.append(n)
-        # Down action
         n = State(state.time + 1, Location(state.location.x, state.location.y-1))
         if self.state_valid(n) and self.transition_valid(state, n):
             neighbors.append(n)
-        # Left action
         n = State(state.time + 1, Location(state.location.x-1, state.location.y))
         if self.state_valid(n) and self.transition_valid(state, n):
             neighbors.append(n)
-        # Right action
         n = State(state.time + 1, Location(state.location.x+1, state.location.y))
         if self.state_valid(n) and self.transition_valid(state, n):
             neighbors.append(n)
         return neighbors
+
 
     def get_first_conflict(self, solution):
         max_t = max([len(plan) for plan in solution.values()])
@@ -172,7 +177,7 @@ class Environment(object):
 
         return constraint_dict
 
-        def get_state(self, agent_name, solution, t):
+    def get_state(self, agent_name, solution, t):
         if t < len(solution[agent_name]):
             return solution[agent_name][t]
         else:
@@ -235,7 +240,6 @@ class HighLevelNode(object):
     def __lt__(self, other):
         return self.cost < other.cost
 
-
 class CBS(object):
     def __init__(self, environment):
         self.env = environment
@@ -291,13 +295,13 @@ class CBS(object):
             plan[agent] = path_dict_list
         return plan
 
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("param", help="input file containing map and obstacles")
     parser.add_argument("output", help="output file with the schedule")
     args = parser.parse_args()
 
-    # Read from input file
     with open(args.param, 'r') as param_file:
         try:
             param = yaml.load(param_file, Loader=yaml.FullLoader)
@@ -310,14 +314,12 @@ def main():
 
     env = Environment(dimension, agents, obstacles)
 
-    # Searching
     cbs = CBS(env)
     solution = cbs.search()
     if not solution:
         print(" Solution not found" )
         return
 
-    # Write to output file
     with open(args.output, 'r') as output_yaml:
         try:
             output = yaml.load(output_yaml, Loader=yaml.FullLoader)
