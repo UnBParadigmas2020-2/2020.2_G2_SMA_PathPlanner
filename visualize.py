@@ -73,6 +73,56 @@ class Animation:
 
   def show(self):
     plt.show()
+  
+  def init_func(self):
+    for p in self.patches:
+      self.ax.add_patch(p)
+    for a in self.artists:
+      self.ax.add_artist(a)
+    return self.patches + self.artists
+
+  def animate_func(self, i):
+    for agent_name, agent in self.combined_schedule.items():
+      pos = self.getState(i / 10, agent)
+      p = (pos[0], pos[1])
+      self.agents[agent_name].center = p
+      self.agent_names[agent_name].set_position(p)
+
+    # reset all colors
+    for _,agent in self.agents.items():
+      agent.set_facecolor(agent.original_face_color)
+
+    # check drive-drive collisions
+    agents_array = [agent for _,agent in self.agents.items()]
+    for i in range(0, len(agents_array)):
+      for j in range(i+1, len(agents_array)):
+        d1 = agents_array[i]
+        d2 = agents_array[j]
+        pos1 = np.array(d1.center)
+        pos2 = np.array(d2.center)
+        if np.linalg.norm(pos1 - pos2) < 0.7:
+          d1.set_facecolor('#01cdfe')
+          d2.set_facecolor('#01cdfe')
+          print("COLLISION! (agent-agent) ({}, {})".format(i, j))
+
+    return self.patches + self.artists
+
+
+  def getState(self, t, d):
+    idx = 0
+    while idx < len(d) and d[idx]["t"] < t:
+      idx += 1
+    if idx == 0:
+      return np.array([float(d[0]["x"]), float(d[0]["y"])])
+    elif idx < len(d):
+      posLast = np.array([float(d[idx-1]["x"]), float(d[idx-1]["y"])])
+      posNext = np.array([float(d[idx]["x"]), float(d[idx]["y"])])
+    else:
+      return np.array([float(d[-1]["x"]), float(d[-1]["y"])])
+    dt = d[idx]["t"] - d[idx-1]["t"]
+    t = (t - d[idx-1]["t"]) / dt
+    pos = (posNext - posLast) * t + posLast
+    return pos
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
