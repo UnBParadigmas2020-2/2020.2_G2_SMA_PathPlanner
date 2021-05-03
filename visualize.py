@@ -63,6 +63,16 @@ class Animation:
                                frames=int(self.T+1) * 10,
                                interval=100,
                                blit=True)
+                              
+  def save(self, file_name, speed):
+    self.anim.save(
+      file_name,
+      "ffmpeg",
+      fps=10 * speed,
+      dpi=200),
+
+  def show(self):
+    plt.show()
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
