@@ -35,3 +35,25 @@ class Animation:
     ymin = -0.5
     xmax = map["map"]["dimensions"][0] - 0.5
     ymax = map["map"]["dimensions"][1] - 0.5
+
+    if __name__ == "__main__":
+  parser = argparse.ArgumentParser()
+  parser.add_argument("map", help="input file containing map")
+  parser.add_argument("schedule", help="schedule for agents")
+  parser.add_argument('--video', dest='video', default=None, help="output video file (or leave empty to show on screen)")
+  parser.add_argument("--speed", type=int, default=1, help="speedup-factor")
+  args = parser.parse_args()
+
+
+  with open(args.map) as map_file:
+    map = yaml.load(map_file, Loader=yaml.FullLoader)
+
+  with open(args.schedule) as states_file:
+    schedule = yaml.load(states_file, Loader=yaml.FullLoader)
+
+  animation = Animation(map, schedule)
+
+  if args.video:
+    animation.save(args.video, args.speed)
+  else:
+    animation.show()
