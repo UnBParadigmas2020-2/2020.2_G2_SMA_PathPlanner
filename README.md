@@ -1,3 +1,8 @@
+# Path Planner
+**Disciplina**: FGA0210 - PARADIGMAS DE PROGRAMAÇÃO - T01 <br>
+**Nro do Grupo**: 02<br>
+**Paradigma**: SMA<br>
+
 ## Alunos
 |Matrícula | Aluno |
 | -- | -- |
@@ -47,7 +52,8 @@ $ python3 visualize.py input.yaml output.yaml
 ```
 
 ## Vídeo
-Adicione 1 ou mais vídeos com a execução do projeto.
+O vídeo de explicação pode ser encontrado na raiz do projeto.
+
 
 ## Outros 
 Iniciamos o projeto com a ideia de simular casos de acidente, e como os agentes se comportariam. Usando o algorítmo de **A Search**, tivemos como simular um caminho válido para o agente percorrer. Iniciamos a simulação com um tabuleiro inicial de 4x4 e avançamos para um tabuleiro 8x8 até chegar aos 32x32.
